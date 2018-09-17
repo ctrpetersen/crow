@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Discord;
+using Discord.Commands;
 
 namespace Crow
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-        }
+        private static void Main(string[] args) => Crow.Instance.StartAsync().GetAwaiter().GetResult();
     }
 }
