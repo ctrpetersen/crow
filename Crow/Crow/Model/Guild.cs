@@ -11,12 +11,12 @@ namespace Crow.Model
         Everyone
     }
 
-    public class Server
+    public class Guild
     {
-        public ulong ServerID { get; set; }
+        public ulong GuildID { get; set; }
         public char CommandPrefix { get; set; }
         public Dictionary<string, string> FaqDict { get; set; }
-        public ulong ModeratorID { get; set; }
+        public List<ulong> ModeratorRoleIDs { get; set; }
 
         public bool ShouldLog { get; set; }
         public ulong LogChannelID { get; set; }
@@ -31,18 +31,11 @@ namespace Crow.Model
         public bool ShouldAnnounceRedditPosts { get; set; }
         public ulong RedditFeedChannelID { get; set; }
 
-
-        public Server()
-        {
-            ShouldLog = false;
-            ShouldTrackTwitch = false;
-            ShouldAnnounceUpdates = false;
-            ShouldAnnounceRedditPosts = false;
-        }
+        public List<Reminder> Reminders { get; set; }
 
         public override string ToString()
         {
-            return Crow.Instance.Client.GetGuild(ServerID).Name;
+            return Crow.Instance.Client.GetGuild(GuildID).Name;
         }
     }
 }
