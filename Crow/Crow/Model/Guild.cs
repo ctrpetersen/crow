@@ -15,8 +15,7 @@ namespace Crow.Model
     {
         public ulong GuildID { get; set; }
         public char CommandPrefix { get; set; }
-        public Dictionary<string, string> FaqDict { get; set; }
-        public List<ulong> ModeratorRoleIDs { get; set; }
+        public ulong ServerOwnerID { get; set; }
 
         public bool ShouldLog { get; set; }
         public ulong LogChannelID { get; set; }
@@ -30,8 +29,6 @@ namespace Crow.Model
 
         public bool ShouldAnnounceRedditPosts { get; set; }
         public ulong RedditFeedChannelID { get; set; }
-
-        public List<Reminder> Reminders { get; set; }
 
         public override string ToString()
         {

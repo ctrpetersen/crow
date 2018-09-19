@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Crow.cs" />
+    <Compile Include="Model\FAQ.cs" />
     <Compile Include="Model\Reminder.cs" />
     <Compile Include="Model\Guild.cs" />
     <Compile Include="Program.cs" />
