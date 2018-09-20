@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Discord;
 using Discord.WebSocket;
 
@@ -6,14 +7,14 @@ namespace Crow.Model
 {
     public enum AnnounceEnum
     {
-        None,
-        Here,
-        Everyone
+        None = 0,
+        Here = 1,
+        Everyone = 2
     }
 
     public class Guild
     {
-        public ulong GuildID { get; set; }
+        public int GuildID { get; set; }
         public char CommandPrefix { get; set; }
         public ulong ServerOwnerID { get; set; }
 
@@ -30,9 +31,12 @@ namespace Crow.Model
         public bool ShouldAnnounceRedditPosts { get; set; }
         public ulong RedditFeedChannelID { get; set; }
 
+        public List<Reminder> Reminders { get; set; }
+        public List<FAQ> FAQs { get; set; }
+
         public override string ToString()
         {
-            return Crow.Instance.Client.GetGuild(GuildID).Name;
+            return Crow.Instance.Client.GetGuild(Convert.ToUInt64(GuildID)).Name;
         }
     }
 }
