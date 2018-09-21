@@ -10,7 +10,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-//https://discordapp.com/oauth2/authorize?client_id=491522696983871488&scope=bot&permissions=268954688
+
 
 namespace Crow
 {
@@ -81,11 +81,16 @@ namespace Crow
         }
 
 #region events
+
         public async Task InstallCommandsAsync()
         {
             Client.MessageReceived += HandleCommandAsync;
             await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
+
+#endregion
+
+#region database handling
 
         private Task JoinedGuild(SocketGuild socketGuild)
         {
@@ -153,6 +158,10 @@ namespace Crow
             CrowContext.SaveChanges();
         }
 
+#endregion
+
+#region tasks
+
         private void SetPlaying(string message, ActivityType activityType = ActivityType.Playing)
         {
             Client.SetGameAsync($"{message} | {Client.Guilds.Sum(guild => guild.Users.Count) - 1} users, {Client.Guilds.Count} guilds");
@@ -177,7 +186,9 @@ namespace Crow
             if (msg.HasCharPrefix(charPrefix, ref argPos) || msg.HasMentionPrefix(Client.CurrentUser, ref argPos))
             {
                 var context = new SocketCommandContext(Client, msg);
-                var result = await CommandService.ExecuteAsync(context, argPos, _services);
+                await CommandService.ExecuteAsync(context, argPos, _services);
+                //if (!result.IsSuccess)
+                //    await Log(new LogMessage(LogSeverity.Error, "CommandService", result.ErrorReason));
             }
         }
 
