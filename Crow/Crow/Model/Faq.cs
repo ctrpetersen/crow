@@ -13,5 +13,12 @@ namespace Crow.Model
         public string GuildId { get; set; }
 
         public Guild Guild { get; set; }
+
+        public override string ToString()
+        {
+            return $"{nameof(Faqid)}: {Faqid}, {nameof(AuthorId)}: {AuthorId}, {nameof(Command)}: {Command}, " +
+                   $"{nameof(CreatedAt)}: {CreatedAt}, {nameof(Content)}: {Content}, {nameof(GuildId)}: {GuildId}, " +
+                   $"{nameof(Guild)}: {Guild}";
+        }
     }
 }

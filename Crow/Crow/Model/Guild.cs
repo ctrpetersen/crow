@@ -26,5 +26,13 @@ namespace Crow.Model
 
         public ICollection<Faq> Faqs { get; set; }
         public ICollection<Reminder> Reminders { get; set; }
+
+        public override string ToString()
+        {
+            return $"{nameof(GuildId)}: {GuildId}, {nameof(CommandPrefix)}: {CommandPrefix}, {nameof(ServerOwnerId)}: {ServerOwnerId}, " +
+                   $"{nameof(ShouldLog)}: {ShouldLog}, {nameof(LogChannelId)}: {LogChannelId}, {nameof(ShouldTrackTwitch)}: {ShouldTrackTwitch}, " +
+                   $"{nameof(LiveRoleId)}: {LiveRoleId}, {nameof(ShouldAnnounceUpdates)}: {ShouldAnnounceUpdates}, {nameof(AnnounceType)}: {AnnounceType}, " +
+                   $"{nameof(UpdateChannelId)}: {UpdateChannelId}, {nameof(ShouldAnnounceRedditPosts)}: {ShouldAnnounceRedditPosts}, {nameof(RedditFeedChannelId)}: {RedditFeedChannelId}";
+        }
     }
 }

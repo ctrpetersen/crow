@@ -13,5 +13,12 @@ namespace Crow.Model
         public string GuildId { get; set; }
 
         public Guild Guild { get; set; }
+
+        public override string ToString()
+        {
+            return $"{nameof(ReminderId)}: {ReminderId}, {nameof(Content)}: {Content}, " +
+                   $"{nameof(WhenToRemind)}: {WhenToRemind}, {nameof(AuthorId)}: {AuthorId}, " +
+                   $"{nameof(ChannelId)}: {ChannelId}, {nameof(GuildId)}: {GuildId}, {nameof(Guild)}: {Guild}";
+        }
     }
 }

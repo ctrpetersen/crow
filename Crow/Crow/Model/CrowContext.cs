@@ -6,7 +6,7 @@ namespace Crow.Model
 {
     public partial class CrowContext : DbContext
     {
-        private string connectionString = Crow.Instance.jsonvars.connection_string.ToString();
+        private string connectionString = Crow.Instance.Jsonvars.db_connection_string.ToString();
 
         public CrowContext()
         {
