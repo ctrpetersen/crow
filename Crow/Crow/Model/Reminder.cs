@@ -6,11 +6,11 @@ namespace Crow.Model
 {
     public class Reminder
     {
-        public int ID { get; set; }
+        public int ReminderID { get; set; }
         public string Content { get; set; }
         public DateTime WhenToRemind { get; set; }
-        public ulong AuthorID { get; set; }
-        public ulong ChannelID { get; set; }
-        public ulong GuildID { get; set; }
+        public string AuthorID { get; set; }
+        public string ChannelID { get; set; }
+        public string GuildID { get; set; }
     }
 }
