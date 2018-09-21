@@ -32,7 +32,7 @@ namespace Crow
         {
             Client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-                LogLevel = LogSeverity.Info,
+                LogLevel = LogSeverity.Debug,
             });
             CommandService = new CommandService();
 
@@ -52,7 +52,7 @@ namespace Crow
                 var total_users = Client.Guilds.Sum(guild => guild.Users.Count);
                 Log(new LogMessage(LogSeverity.Info, "Crow",
                     $"{Client.CurrentUser.Username} is connected to " +
-                    $"{Client.Guilds.Count} guild(s), serving a total of {total_users} online users."));
+                    $"{Client.Guilds.Count} guild(s), serving a total of {total_users-1} users."));
                 Log(new LogMessage(LogSeverity.Info, "Crow",
                     $"Bot owner - {BotOwner.Username}#{BotOwner.Discriminator}"));
                 return Task.CompletedTask;

@@ -4,7 +4,7 @@ using Discord.WebSocket;
 
 namespace Crow.Model
 {
-    public class Reminder
+    public class Reminder_original
     {
         public int ReminderID { get; set; }
         public string Content { get; set; }

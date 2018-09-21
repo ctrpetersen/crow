@@ -182,9 +182,10 @@
     <Compile Include="Crow.cs" />
     <Compile Include="DAL\CrowContext.cs" />
     <Compile Include="IdHelper.cs" />
-    <Compile Include="Model\FAQ.cs" />
-    <Compile Include="Model\Reminder.cs" />
-    <Compile Include="Model\Guild.cs" />
+    <Compile Include="Model\AnnouncementTypeEnum.cs" />
+    <Compile Include="Model\FAQ_original.cs" />
+    <Compile Include="Model\Reminder_original.cs" />
+    <Compile Include="Model\Guild_original.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

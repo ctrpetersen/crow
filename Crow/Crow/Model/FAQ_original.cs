@@ -2,7 +2,7 @@
 
 namespace Crow.Model
 {
-    public class FAQ
+    public class FAQ_original
     {
         public int FAQID { get; set; }
         public string AuthorID { get; set; }

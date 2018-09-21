@@ -12,7 +12,7 @@ namespace Crow.Model
         Everyone = 2
     }
 
-    public class Guild
+    public class Guild_original
     {
         public string GuildID { get; set; }
         public char CommandPrefix { get; set; }
@@ -31,8 +31,8 @@ namespace Crow.Model
         public bool ShouldAnnounceRedditPosts { get; set; }
         public string RedditFeedChannelID { get; set; }
 
-        public ICollection<Reminder> Reminders { get; set; }
-        public ICollection<FAQ> FAQs { get; set; }
+        public ICollection<Reminder_original> Reminders { get; set; }
+        public ICollection<FAQ_original> FAQs { get; set; }
 
         public override string ToString()
         {
