@@ -188,6 +188,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CoreCommands.cs" />
     <Compile Include="Crow.cs" />
     <Compile Include="IdHelper.cs" />
     <Compile Include="Model\AnnouncementTypeEnum.cs" />
@@ -203,5 +204,6 @@
     <None Include="efpt.config.json" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

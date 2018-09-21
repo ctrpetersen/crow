@@ -55,6 +55,8 @@ namespace Crow
 
             Client.Ready += () =>
             {
+                SetPlaying("!help");
+
                 BotOwner = Client.GetUser(ulong.Parse(Jsonvars.bot_owner_id.ToString()));
                 var total_users = Client.Guilds.Sum(guild => guild.Users.Count);
                 Log(new LogMessage(LogSeverity.Info, "Crow",
@@ -78,13 +80,12 @@ namespace Crow
             await Task.Delay(-1);
         }
 
+#region events
         public async Task InstallCommandsAsync()
         {
             Client.MessageReceived += HandleCommandAsync;
             await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
-
-#region events
 
         private Task JoinedGuild(SocketGuild socketGuild)
         {
@@ -99,8 +100,7 @@ namespace Crow
 
             if (CrowContext.Guilds.Any(g => g.GuildId == socketGuild.Id.ToString()))
             {
-                Guild guild = new Guild {GuildId = socketGuild.Id.ToString()};
-                CrowContext.Guilds.Attach(guild);
+                Guild guild = CrowContext.Guilds.Find(socketGuild.Id.ToString());
                 CrowContext.Guilds.Remove(guild);
                 CrowContext.SaveChanges();
                 Log(new LogMessage(LogSeverity.Info, "Crow", $"Deleted guild {socketGuild.Name} from database."));
@@ -113,8 +113,6 @@ namespace Crow
             return Task.CompletedTask;
         }
 
-#endregion
-
         private void CheckForGuildsNotInDB()
         {
             if (Client.Guilds.Count != 0)
@@ -123,7 +121,7 @@ namespace Crow
                 {
                     if (!CrowContext.Guilds.Any(g => g.GuildId == socketGuild.Id.ToString()))
                     {
-                        Log(new LogMessage(LogSeverity.Info, "Database",
+                        Log(new LogMessage(LogSeverity.Warning, "Database",
                             $"No database entry for guild {socketGuild.Name}. Creating new entry..."));
                         AddGuildToDB(socketGuild);
                     }
@@ -155,17 +153,55 @@ namespace Crow
             CrowContext.SaveChanges();
         }
 
-        private async Task HandleCommandAsync(SocketMessage SocketMessage)
+        private void SetPlaying(string message, ActivityType activityType = ActivityType.Playing)
         {
-            if (!(SocketMessage is SocketUserMessage message)) return;
-            int argumentPos = 0;
+            Client.SetGameAsync($"{message} | {Client.Guilds.Sum(guild => guild.Users.Count) - 1} users, {Client.Guilds.Count} guilds");
+        }
 
+#endregion
 
+        private async Task HandleCommandAsync(SocketMessage socketMessage)
+        {
+            var msg = socketMessage as SocketUserMessage;
+            if (msg == null) return;
+            if (msg.Author.IsBot) return;
+
+            var channel = msg.Channel as SocketGuildChannel;
+            if (channel == null) return;
+
+            var guild = CrowContext.Guilds.Find(channel.Guild.Id.ToString());
+
+            char charPrefix = Convert.ToChar(guild.CommandPrefix);
+
+            int argPos = 0;
+            if (msg.HasCharPrefix(charPrefix, ref argPos) || msg.HasMentionPrefix(Client.CurrentUser, ref argPos))
+            {
+                var context = new SocketCommandContext(Client, msg);
+                var result = await CommandService.ExecuteAsync(context, argPos, _services);
+            }
         }
 
         public static Task Log(LogMessage logmsg)
         {
-            Console.WriteLine(logmsg.ToString());
+            switch (logmsg.Severity)
+            {
+                case LogSeverity.Critical:
+                case LogSeverity.Error:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case LogSeverity.Warning:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case LogSeverity.Info:
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case LogSeverity.Verbose:
+                case LogSeverity.Debug:
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    break;
+            }
+            Console.WriteLine($"{DateTime.Now} [{logmsg.Severity,8}] {logmsg.Source}: {logmsg.Message} {logmsg.Exception}");
+            Console.ResetColor();
             return Task.CompletedTask;
         }
 
