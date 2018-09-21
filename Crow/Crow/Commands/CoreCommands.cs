@@ -15,9 +15,9 @@ namespace Crow.Commands
             {
                 string aliases = string.Join(", ", command.Aliases).Replace($"{command.Name}, ", "");
 
-                commands += $"\n`{command.Name}` \n({aliases}) \n{command.Summary}\n";
+                commands += $"\n__**{command.Name}**__ \n`{command.Module.Name}` \n*({aliases})* \n{command.Summary}\n";
             }
-            await ReplyAsync($"\n{commands}\n\nIf you need help or have any questions/feedback, contact Zirr#8008.");
+            await ReplyAsync($"{commands}");
         }
 
         [Command("info")]
@@ -28,8 +28,12 @@ namespace Crow.Commands
             await ReplyAsync("Welcome to Crow. I am a bot for various helpful features, most of them geared towards Factorio servers." +
                              "\n\nYou can view my commands with (x)help, (x) being the prefix of this server (! by default.)." +
                              "\n\nIf you have any issues, questions, feedback or suggestions, contact me at Zirr#8008." +
+                             "\nI am still a work-in-progress, so if you encounter any bugs or issues, please let me know." +
                              "\n\nTo invite me to your server, use this link:" +
-                             "\n\nhttps://discordapp.com/oauth2/authorize?client_id=491522696983871488&scope=bot&permissions=268954688" +
+                             "\n\n<https://discordapp.com/oauth2/authorize?client_id=491522696983871488&scope=bot&permissions=268954688>" +
+                             "\n\nThe main server is discord.gg/factorio." +
+                             "\n\nI am also open source! You can find it at <https://github.com/ctrpetersen/crow>" +
+                             "\nPull requests are more than welcome." +
                              "\n\nThank you for using the bot!");
         }
     }
