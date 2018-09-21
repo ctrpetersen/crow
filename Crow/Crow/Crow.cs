@@ -22,8 +22,6 @@ namespace Crow
         public DiscordSocketClient Client;
         public CommandService CommandService;
 
-        public DBContext DBContext = new DBContext();
-
         public dynamic jsonvars = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(@".\private.json"));
         public SocketUser BotOwner;
         
@@ -72,7 +70,7 @@ namespace Crow
         private async Task HandleCommandAsync(SocketMessage SocketMessage)
         {
             if (!(SocketMessage is SocketUserMessage message)) return;
-            int pos = 0;
+            int argumentPos = 0;
 
 
         }

@@ -6,7 +6,7 @@ namespace Crow.Model
 {
     public class Reminder
     {
-        public int ReminderID { get; set; }
+        public int ID { get; set; }
         public string Content { get; set; }
         public DateTime WhenToRemind { get; set; }
         public ulong AuthorID { get; set; }

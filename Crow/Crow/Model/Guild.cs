@@ -14,7 +14,7 @@ namespace Crow.Model
 
     public class Guild
     {
-        public int GuildID { get; set; }
+        public int ID { get; set; }
         public char CommandPrefix { get; set; }
         public ulong ServerOwnerID { get; set; }
 
@@ -36,7 +36,7 @@ namespace Crow.Model
 
         public override string ToString()
         {
-            return Crow.Instance.Client.GetGuild(Convert.ToUInt64(GuildID)).Name;
+            return Crow.Instance.Client.GetGuild(Convert.ToUInt64(ID)).Name;
         }
     }
 }
