@@ -1,0 +1,1 @@
+﻿{"ContextClassName":"CrowContext","DefaultDacpacSchema":null,"IdReplace":false,"IncludeConnectionString":true,"OutputPath":"Model","ProjectRootNamespace":"Crow","SelectedToBeGenerated":0,"Tables":["dbo.FAQs","dbo.Guilds","dbo.Reminders"],"UseDatabaseNames":false,"UseFluentApiOnly":true,"UseHandleBars":false,"UseInflector":true}
