@@ -71,6 +71,7 @@ namespace Crow
                 Log(new LogMessage(LogSeverity.Info, "Database", $"{CrowContext.Guilds.Count()} guilds in database."));
                 Log(new LogMessage(LogSeverity.Info, "Database", $"{CrowContext.Faqs.Count()} FAQs in database."));
                 Log(new LogMessage(LogSeverity.Info, "Database", $"{CrowContext.Reminders.Count()} reminders in database."));
+                Log(new LogMessage(LogSeverity.Info, "Crow", $"{CommandService.Commands.Count()} commands."));
 
                 return Task.CompletedTask;
             };
