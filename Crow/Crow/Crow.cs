@@ -10,8 +10,6 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-
-
 namespace Crow
 {
     public class Crow
@@ -58,10 +56,10 @@ namespace Crow
                 SetPlaying("!help");
 
                 BotOwner = Client.GetUser(ulong.Parse(Jsonvars.bot_owner_id.ToString()));
-                var total_users = Client.Guilds.Sum(guild => guild.Users.Count);
+                var totalUsers = Client.Guilds.Sum(guild => guild.Users.Count);
                 Log(new LogMessage(LogSeverity.Info, "Crow",
                     $"{Client.CurrentUser.Username} is connected to " +
-                    $"{Client.Guilds.Count} guild(s), serving a total of {total_users-1} users."));
+                    $"{Client.Guilds.Count} guild(s), serving a total of {totalUsers-1} users."));
 
                 if (BotOwner != null)
                 {
@@ -69,7 +67,7 @@ namespace Crow
                         $"Bot owner - {BotOwner.Username}#{BotOwner.Discriminator}"));
                 }
 
-                CheckForGuildsNotInDB();
+                CheckForGuildsNotInDb();
                 Log(new LogMessage(LogSeverity.Info, "Database", $"{CrowContext.Guilds.Count()} guilds in database."));
                 Log(new LogMessage(LogSeverity.Info, "Database", $"{CrowContext.Faqs.Count()} FAQs in database."));
                 Log(new LogMessage(LogSeverity.Info, "Database", $"{CrowContext.Reminders.Count()} reminders in database."));
@@ -95,7 +93,7 @@ namespace Crow
         private Task JoinedGuild(SocketGuild socketGuild)
         {
             Log(new LogMessage(LogSeverity.Info, "Crow", $"Joined guild - {socketGuild.Name}"));
-            AddGuildToDB(socketGuild);
+            AddGuildToDb(socketGuild);
             return Task.CompletedTask;
         }
 
@@ -118,41 +116,41 @@ namespace Crow
             return Task.CompletedTask;
         }
 
-        private void CheckForGuildsNotInDB()
+        private void CheckForGuildsNotInDb()
         {
-            if (Client.Guilds.Count != 0)
+            if (Client.Guilds.Count == 0) return;
+            foreach (var socketGuild in Client.Guilds)
             {
-                foreach (var socketGuild in Client.Guilds)
+                if (!CrowContext.Guilds.Any(g => g.GuildId == socketGuild.Id.ToString()))
                 {
-                    if (!CrowContext.Guilds.Any(g => g.GuildId == socketGuild.Id.ToString()))
-                    {
-                        Log(new LogMessage(LogSeverity.Warning, "Database",
-                            $"No database entry for guild {socketGuild.Name}. Creating new entry..."));
-                        AddGuildToDB(socketGuild);
-                    }
-                    else
-                    {
-                        Log(new LogMessage(LogSeverity.Info, "Crow", $"All guilds in database."));
-                    }
+                    Log(new LogMessage(LogSeverity.Warning, "Database",
+                        $"No database entry for guild {socketGuild.Name}. Creating new entry..."));
+                    AddGuildToDb(socketGuild);
+                }
+                else
+                {
+                    Log(new LogMessage(LogSeverity.Info, "Crow", "All guilds in database."));
                 }
             }
         }
 
-        private void AddGuildToDB(SocketGuild socketGuild)
+        private void AddGuildToDb(SocketGuild socketGuild)
         {
-            Guild guild = new Guild();
-            guild.GuildId = socketGuild.Id.ToString();
-            guild.CommandPrefix = "!";
-            guild.ServerOwnerId = socketGuild.OwnerId.ToString();
-            guild.ShouldLog = false;
-            guild.LogChannelId = "";
-            guild.ShouldTrackTwitch = false;
-            guild.LiveRoleId = "";
-            guild.ShouldAnnounceUpdates = false;
-            guild.AnnounceType = 0;
-            guild.UpdateChannelId = "";
-            guild.ShouldAnnounceRedditPosts = false;
-            guild.RedditFeedChannelId = "";
+            Guild guild = new Guild
+            {
+                GuildId = socketGuild.Id.ToString(),
+                CommandPrefix = "!",
+                ServerOwnerId = socketGuild.OwnerId.ToString(),
+                ShouldLog = false,
+                LogChannelId = "",
+                ShouldTrackTwitch = false,
+                LiveRoleId = "",
+                ShouldAnnounceUpdates = false,
+                AnnounceType = 0,
+                UpdateChannelId = "",
+                ShouldAnnounceRedditPosts = false,
+                RedditFeedChannelId = ""
+            };
 
             CrowContext.Guilds.Add(guild);
             CrowContext.SaveChanges();
