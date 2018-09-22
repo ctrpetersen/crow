@@ -192,7 +192,7 @@ namespace Crow
             }
 
             if (user.Roles.Any(role => role.Permissions.Administrator || role.Permissions.BanMembers || role.Permissions.ManageChannels ||
-                                       role.Permissions.ManageGuild || role.Permissions.ManageRoles))
+                                       role.Permissions.ManageGuild || role.Permissions.ManageRoles || role.Permissions.ManageMessages))
             {
                 return true;
             }

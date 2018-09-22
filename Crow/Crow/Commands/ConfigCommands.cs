@@ -11,44 +11,58 @@ namespace Crow.Commands
     {
         [Command("config")]
         [Summary("`moderator only`\nViews all the config options for this guild and the current values, optionally allowing you to change them.\n" +
-                 "*Usage:* !config to view all the options, !config <setting name> <setting value> to change one, e.g. !config ShouldLog true or !config LiveRole @RoleMention.")]
-        [Alias("settings", "configuration")]
-        public async Task ConfigCommand()
+                 "*Usage:* !config to view all the options, !config <setting name> <setting value> to change one, e.g. !config ShouldLog true or !config LiveRole @RoleMention.\n" +
+                 "The announcement ping type can be: None, Here or Everyone.")]
+        [Alias("settings", "configuration", "setting")]
+        public async Task ConfigCommand(string optionToChange = null)
         {
+            if (!Crow.Instance.UserIsMod(Context))
+            {
+                await ReplyAsync($"Error - {Context.User.Username} is not a moderator.");
+                return;
+            }
+
+            //param
+            if (optionToChange != null)
+            {
+                await ReplyAsync(optionToChange);
+                return;
+            }
+
             var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
 
             //no param
             string reply = $"Configuration for {Context.Guild.Name}\n";
                                                 
-            reply += $"\n`Command prefix`   {guild.CommandPrefix}";
-            reply += $"\n`Should log`   {guild.ShouldLog}";
+            reply += $"\n`CommandPrefix`   {guild.CommandPrefix}";
+            reply += $"\n`ShouldLog`   {guild.ShouldLog}";
 
             if (guild.LogChannelId != "")
-                reply += $"\n`Log channel`   {Context.Guild.GetChannel(Convert.ToUInt64(guild.LogChannelId)).Name}";
+                reply += $"\n`LogChannelId`   {Context.Guild.GetChannel(Convert.ToUInt64(guild.LogChannelId)).Name}";
             else
-                reply += $"\n`Log channel`   None specified";
+                reply += $"\n`LogChannelId`   None specified";
 
-            reply += $"\n`Should track twitch`   {guild.ShouldTrackTwitch}";
+            reply += $"\n`ShouldTrackTwitch`   {guild.ShouldTrackTwitch}";
 
             if (guild.LiveRoleId != "")
-                reply += $"\n`Live role`   {Context.Guild.GetRole(Convert.ToUInt64(guild.LiveRoleId)).Name}";
+                reply += $"\n`LiveRoleId`   {Context.Guild.GetRole(Convert.ToUInt64(guild.LiveRoleId)).Name}";
             else
-                reply += $"\n`Live role`   None specified";
+                reply += $"\n`LiveRoleId`   None specified";
 
-            reply += $"\n`Should announce updates`   {guild.ShouldAnnounceUpdates}";
-            reply += $"\n`Announce type`   {(AnnouncementTypeEnum)guild.AnnounceType}";
+            reply += $"\n`ShouldAnnounceUpdates`   {guild.ShouldAnnounceUpdates}";
+            reply += $"\n`AnnounceType`   {(AnnouncementTypeEnum)guild.AnnounceType}";
 
             if (guild.UpdateChannelId != "")
-                reply += $"\n`Update channel`   {Context.Guild.GetChannel(Convert.ToUInt64(guild.UpdateChannelId)).Name}";
+                reply += $"\n`UpdateChannelId`   {Context.Guild.GetChannel(Convert.ToUInt64(guild.UpdateChannelId)).Name}";
             else
-                reply += $"\n`Update channel`   None specified";
+                reply += $"\n`UpdateChannelId`   None specified";
 
-            reply += $"\n`Should announce reddit posts`   {guild.ShouldAnnounceUpdates}";
+            reply += $"\n`ShouldAnnounceRedditPosts`   {guild.ShouldAnnounceRedditPosts}";
 
             if (guild.RedditFeedChannelId != "")
-                reply += $"\n`Reddit feed channel`   {Context.Guild.GetChannel(Convert.ToUInt64(guild.RedditFeedChannelId)).Name}";
+                reply += $"\n`RedditFeedChannelId`   {Context.Guild.GetChannel(Convert.ToUInt64(guild.RedditFeedChannelId)).Name}";
             else
-                reply += $"\n`Reddit feed channel`   None specified";
+                reply += $"\n`RedditFeedChannelId`   None specified";
 
             await ReplyAsync(reply);
 
