@@ -10,11 +10,14 @@ namespace Crow.Commands
     public class ConfigCommands : ModuleBase<SocketCommandContext>
     {
         [Command("config")]
-        [Summary("Views all the config options for this guild and the current values.")]
+        [Summary("`moderator only`\nViews all the config options for this guild and the current values, optionally allowing you to change them.\n" +
+                 "*Usage:* !config to view all the options, !config <setting name> <setting value> to change one, e.g. !config ShouldLog true or !config LiveRole @RoleMention.")]
         [Alias("settings", "configuration")]
         public async Task ConfigCommand()
         {
             var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
+
+            //no param
             string reply = $"Configuration for {Context.Guild.Name}\n";
                                                 
             reply += $"\n`Command prefix`   {guild.CommandPrefix}";
@@ -52,7 +55,7 @@ namespace Crow.Commands
         }
 
         [Command("changeprefix")]
-        [Summary("`moderator only` Changes prefix.\nUsage: !prefix CHARACTER")]
+        [Summary("`moderator only`\nChanges prefix.\n*Usage:* !prefix CHARACTER")]
         [Alias("prefix", "commandprefix")]
         public async Task PrefixCommand(string prefix)
         {
@@ -69,15 +72,6 @@ namespace Crow.Commands
             await Crow.Log(new LogMessage(LogSeverity.Info, "Config", $"Changed prefix for {Context.Guild.Name} to {prefix}."));
 
             await ReplyAsync($"Successfully changed prefix to `{prefix}`");
-        }
-
-        [Command("Log")]
-        [Summary("`moderator only` \nLog new users joining/leaving in customisable channel.\nUsage: !log true/false (yes/no also accepted)")]
-        [Alias("shouldlog")]
-        public async Task LogCommand(string option)
-        {
-            var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
-            
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using Crow.Model;
 using Discord;
@@ -161,9 +163,42 @@ namespace Crow
 
 #region tasks
 
-        private void SetPlaying(string message, ActivityType activityType = ActivityType.Playing)
+        public void SetPlaying(string message, ActivityType activityType = ActivityType.Playing)
         {
             Client.SetGameAsync($"{message} | {Client.Guilds.Sum(guild => guild.Users.Count) - 1} users, {Client.Guilds.Count} guilds");
+        }
+
+        #endregion
+
+#region helpers
+
+        public bool UserIsMod(SocketCommandContext context)
+        {
+            var user = context.User as SocketGuildUser;
+            if (user == null)
+            {
+                Log(new LogMessage(LogSeverity.Error, "UserIsMod", $"User is null - {context}"));
+                return false;
+            }
+
+            if (user.Id == context.Guild.OwnerId)
+                return true;
+
+            if (user.Roles.Any(role => role.Name.ToLower().Contains("mod") || role.Name.ToLower().Contains("moderator") ||
+                                       role.Name.ToLower().Contains("admin") || role.Name.ToLower().Contains("owner") ||
+                                       role.Name.ToLower().Contains("bot commander") || role.Name.ToLower().Contains("crow")))
+            {
+                return true;
+            }
+
+            if (user.Roles.Any(role => role.Permissions.Administrator || role.Permissions.BanMembers || role.Permissions.ManageChannels ||
+                                       role.Permissions.ManageGuild || role.Permissions.ManageRoles))
+            {
+                return true;
+            }
+
+            return false;
+
         }
 
 #endregion
