@@ -7,7 +7,7 @@ namespace Crow.Commands
     public class CoreCommands : ModuleBase<SocketCommandContext>
     {
         [Command("help")]
-        [Summary("Lists all available commands, or just one. \n*Usage:*!help / !help <command name>")]
+        [Summary("Lists all available commands, or just one. \n*Usage:* !help / !help <command name>")]
         [Alias("commands", "command")]
         public async Task HelpCommand(string commandParam = null)
         {
@@ -26,9 +26,10 @@ namespace Crow.Commands
                     reply = $"No command named {commandParam} found.";
                 }
             }
+
+            //all commands
             else
             {
-                //all commands
                 foreach (var command in Crow.Instance.CommandService.Commands)
                 {
                     string aliases = string.Join(", ", command.Aliases).Replace($"{command.Name}, ", "");

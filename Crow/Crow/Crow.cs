@@ -73,7 +73,7 @@ namespace Crow
                 Log(new LogMessage(LogSeverity.Info, "Database", $"{CrowContext.Guilds.Count()} guilds in database."));
                 Log(new LogMessage(LogSeverity.Info, "Database", $"{CrowContext.Faqs.Count()} FAQs in database."));
                 Log(new LogMessage(LogSeverity.Info, "Database", $"{CrowContext.Reminders.Count()} reminders in database."));
-                Log(new LogMessage(LogSeverity.Info, "Crow", $"{CommandService.Commands.Count()} commands."));
+                Log(new LogMessage(LogSeverity.Info, "Crow", $"Loaded {CommandService.Commands.Count()} commands."));
 
                 return Task.CompletedTask;
             };
@@ -209,6 +209,11 @@ namespace Crow
             }
             Log(new LogMessage(LogSeverity.Error, "TryFindGeneralChannel", $"Did not find general or main channel."));
             return null;
+        }
+
+        public bool ClientCanSeeChannel(SocketGuildChannel channel, SocketGuild guild)
+        {
+            return guild.CurrentUser.GetPermissions(channel).SendMessages;
         }
 
 #endregion
