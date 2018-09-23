@@ -198,7 +198,17 @@ namespace Crow
             }
 
             return false;
+        }
 
+        public SocketGuildChannel TryFindGeneralChannel(SocketGuild guild)
+        {
+            foreach (var channel in guild.TextChannels)
+            {
+                if (channel.Name.ToLower() == "general" || channel.Name.ToLower() == "main")
+                    return channel;
+            }
+            Log(new LogMessage(LogSeverity.Error, "TryFindGeneralChannel", $"Did not find general or main channel."));
+            return null;
         }
 
 #endregion
