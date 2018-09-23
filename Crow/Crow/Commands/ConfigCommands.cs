@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Crow.Model;
 using Discord;
@@ -23,6 +25,12 @@ namespace Crow.Commands
                 return;
             }
 
+            var input = TryParseInput(optionValue).ToString();
+            if (input == "invalid")
+                await ReplyAsync($"{optionValue} - invalid");
+            await ReplyAsync(input);
+            return;
+
             //param
             if (optionToChange != null)
             {
@@ -33,6 +41,8 @@ namespace Crow.Commands
                 }
                 //big ugly incoming :monkaGIGA:
 
+                //find type of input - bool, 
+
                 switch (optionToChange.ToLower())
                 {
                     case "changeprefix":
@@ -42,28 +52,6 @@ namespace Crow.Commands
                         break;
                     case "shouldlog":
                     case "log":
-                        bool isValidbool;
-                        if (bool.TryParse(optionValue, out isValidbool))
-                        {
-                            if (isValidbool)
-                            {
-                                //valid bool, true
-                            }
-                            else
-                            {
-                                //valid bool, false
-                            }
-                        }
-                        else
-                        {
-                            await ReplyAsync($"Error - invalid value {optionValue}. Only true/false allowed.");
-                        }
-                        var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
-                        guild.ShouldLog = optionBool;
-                        Crow.Instance.CrowContext.Guilds.Update(guild);
-                        Crow.Instance.CrowContext.SaveChanges();
-                        await Crow.Log(new LogMessage(LogSeverity.Info, "Config", $"Changed ShouldLog for {Context.Guild.Name} to {optionBool}."));
-                        await ReplyAsync($"Successfully changed ShouldLog to `{optionBool}`");
                         break;
 
 
@@ -135,21 +123,44 @@ namespace Crow.Commands
             await ReplyAsync($"Successfully changed prefix to `{prefix}`");
         }
 
-        //returns null if no valid input was able to be parsed
+        //returns string "invalid" if no valid input was able to be parsed
         private dynamic TryParseInput(string input)
         {
-            bool isValidBool;
+            input = input.ToLower();
 
-            if (bool.TryParse(input, out isValidBool))
+            //yes/no
+            if (input == "yes")
+                return true;
+            if (input == "no")
+                return false;
+            //true/false
+            try
             {
-                return isValidBool;
+                return bool.Parse(input);
             }
-            else
+            catch (Exception e)
             {
-                
+                //not bool, try next parse
+            }
+            
+            //is channel mention or ID - also check if client has permission to view
+            if (Context.Message.MentionedChannels.Count == 1)
+            {
+                var channel = Context.Message.MentionedChannels.ToList()[0];
+                if (Crow.Instance.ClientCanSeeChannel(channel, Context.Guild))
+                {
+                    if (channel.GetType() == typeof(SocketTextChannel))
+                        return channel;
+                    ReplyAsync($"Error - {channel.Name} is not a text channel.");
+                    return "invalid";
+                }
+                ReplyAsync($"Error - Cannot send messages in channel {channel.Name}");
+                return "invalid";
             }
 
-            return true;
+
+
+            return "invalid";
         }
     }
 }
