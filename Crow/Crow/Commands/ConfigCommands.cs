@@ -14,7 +14,8 @@ namespace Crow.Commands
     {
         [Command("config")]
         [Summary("`moderator only`\nViews all the config options for this guild and the current values, optionally allowing you to change them.\n" +
-                 "*Usage:* !config to view all the options, !config <setting name> <setting value> to change one, e.g. !config ShouldLog true or !config LiveRole @RoleMention.\n" +
+                 "*Usage:* !config to view all the options, !config <setting name> <setting value> to change one, e.g. !config ShouldLog true or !config LiveRole @RoleMention" +
+                 "(alternatively just the name of it. Remember to wrap it in quotes if it contains a space!\n" +
                  "The announcement ping type can be: None, Here or Everyone.")]
         [Alias("settings", "configuration", "setting")]
         public async Task ConfigCommand(string optionToChange = null, string optionValue = null)
@@ -25,12 +26,6 @@ namespace Crow.Commands
                 return;
             }
 
-            var input = TryParseInput(optionValue).ToString();
-            if (input == "invalid")
-                await ReplyAsync($"Error - unable to parse input {optionValue}");
-            await ReplyAsync(input);
-            return;
-
             //param
             if (optionToChange != null)
             {
@@ -39,32 +34,32 @@ namespace Crow.Commands
                     await ReplyAsync($"Error - you must assign a value to the option {optionToChange}");
                     return;
                 }
-                //big ugly incoming :monkaGIGA:
 
-                //find type of input - bool, 
+                optionToChange = optionToChange.ToLower();
+                var input = TryParseInput(optionValue.ToLower()).ToString();
 
-                switch (optionToChange.ToLower())
+                if (input == "invalid")
                 {
-                    case "changeprefix":
-                    case "prefix":
-                    case "commandprefix":
-                        await PrefixCommand(optionValue);
-                        break;
-                    case "shouldlog":
-                    case "log":
-                        break;
+                    await ReplyAsync($"Error - unable to parse input {optionValue}");
+                    return;
+                }
 
-
-                    default:
-                        await ReplyAsync($"Error - No option found named {optionToChange}");
-                        break;
+                if (optionToChange == "commandprefix")
+                {
+                    PrefixCommand(input);
+                }
+                else if (optionToChange == "shouldlog" || optionToChange == "shouldtracktwich" ||
+                         optionToChange == "shouldannounceupdates" || optionToChange == "shouldannounceredditposts")
+                {
+                    await ReplyAsync(input + optionToChange);
                 }
             }
+
+
+            //no param
             else
             {
                 var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
-
-                //no param
                 string reply = $"Configuration for {Context.Guild.Name}\n";
 
                 reply += $"\n`CommandPrefix`   {guild.CommandPrefix}";
@@ -126,8 +121,6 @@ namespace Crow.Commands
         //returns string "invalid" if no valid input was able to be parsed
         private dynamic TryParseInput(string input)
         {
-            input = input.ToLower();
-
             //yes/no
             if (input == "yes")
                 return true;
