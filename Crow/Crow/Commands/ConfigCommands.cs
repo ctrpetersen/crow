@@ -27,7 +27,7 @@ namespace Crow.Commands
 
             var input = TryParseInput(optionValue).ToString();
             if (input == "invalid")
-                await ReplyAsync($"{optionValue} - invalid");
+                await ReplyAsync($"Error - unable to parse input {optionValue}");
             await ReplyAsync(input);
             return;
 
@@ -158,9 +158,60 @@ namespace Crow.Commands
                 return "invalid";
             }
 
+            if (input.Length == 18 && IsDigits(input))
+            {
+                var channel = Context.Guild.GetChannel(ulong.Parse(input));
+                if (channel != null)
+                {
+                    if (Crow.Instance.ClientCanSeeChannel(channel, Context.Guild))
+                        return channel;
+                    ReplyAsync($"Error - Cannot send messages in channel {channel.Name}");
+                    return "invalid";
+                }
+            }
 
+            //is role mention or id - is role name in text
+            if (Context.Message.MentionedRoles.Count == 1)
+            {
+                return Context.Message.MentionedRoles.ToList()[0];
+            }
 
+            if (input != "none" || input != "here" || input != "everyone")
+            {
+                foreach (var role in Context.Guild.Roles)
+                {
+                    if (role.Name.ToLower() == input)
+                        return role;
+                }
+            }
+
+            //announcement type
+            if (input == "none" || input == "here" || input == "everyone")
+            {
+                switch (input)
+                {
+                    case "none":
+                        return AnnouncementTypeEnum.None;
+                    case "here":
+                        return AnnouncementTypeEnum.Here;
+                    case "everyone":
+                        return AnnouncementTypeEnum.Everyone;
+                }
+            }
+
+            //parsing failed - inform user
             return "invalid";
+        }
+
+        private static bool IsDigits(string input)
+        {
+            foreach (char c in input)
+            {
+                if (c < '0' || c > '9')
+                    return false;
+            }
+
+            return true;
         }
     }
 }
