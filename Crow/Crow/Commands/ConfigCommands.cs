@@ -36,9 +36,9 @@ namespace Crow.Commands
                 }
 
                 optionToChange = optionToChange.ToLower();
-                var input = TryParseInput(optionValue.ToLower()).ToString();
+                var input = TryParseInput(optionValue.ToLower());
 
-                if (input == "invalid")
+                if (input is string && input == "invalid")
                 {
                     await ReplyAsync($"Error - unable to parse input {optionValue}");
                     return;
@@ -49,8 +49,20 @@ namespace Crow.Commands
                     case "commandprefix":
                     case "prefix":
                     case "changeprefix":
+                        Console.WriteLine(input.GetType());
+                        if (!input.GetType() == typeof(String))
+                        {
+                            await ReplyAsync($"Error - unable to parse input {optionValue} for prefix setting.");
+                            //return;
+                        }
+                        else if (input.ToString().Length != 1)
+                        {
+                            await ReplyAsync($"Error - unable to parse input {optionValue} for prefix setting.");
+                            //return;
+                        }
                         PrefixCommand(input);
                         return;
+
                     case "shouldlog":
                     case "shouldtracktwich":
                     case "shouldannounceupdates":
@@ -127,20 +139,11 @@ namespace Crow.Commands
         //returns string "invalid" if no valid input was able to be parsed
         private dynamic TryParseInput(string input)
         {
-            //yes/no
-            if (input == "yes")
+            //bool
+            if (input == "yes" || input == "true")
                 return true;
-            if (input == "no")
+            if (input == "no" || input == "false")
                 return false;
-            //true/false
-            try
-            {
-                return bool.Parse(input);
-            }
-            catch (Exception e)
-            {
-                //not bool, try next parse
-            }
             
             //is channel mention or ID - also check if client has permission to view
             if (Context.Message.MentionedChannels.Count == 1)
