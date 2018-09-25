@@ -38,6 +38,8 @@ namespace Crow.Commands
 
                 optionToChange = optionToChange.ToLower();
 
+
+                //big switch... heck.
                 switch (optionToChange)
                 {
                     case "commandprefix":
@@ -52,10 +54,25 @@ namespace Crow.Commands
                         return;
 
                     case "shouldlog":
-                    case "shouldtracktwitch":
-                    case "shouldannounceupdates":
-                    case "shouldannounceredditposts":
-                        break;
+                        bool? inputBool = IsBool(optionValue);
+
+                        switch (inputBool)
+                        {
+                            case null:
+                                await ReplyAsync($"Error - Incorrect parameter for setting shouldlog.");
+                                return;
+                            case true:
+                            case false:
+                                bool shouldLogBool = (bool) inputBool;
+                                var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
+                                guild.ShouldLog = shouldLogBool;
+                                Crow.Instance.CrowContext.Guilds.Update(guild);
+                                Crow.Instance.CrowContext.SaveChanges();
+                                await ReplyAsync($"Successfully changed shouldlog to `{inputBool.ToString()}`");
+                                return;
+                            default:
+                                return;
+                        }
 
                 }
             }
