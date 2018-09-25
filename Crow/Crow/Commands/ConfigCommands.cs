@@ -44,14 +44,20 @@ namespace Crow.Commands
                     return;
                 }
 
-                if (optionToChange == "commandprefix")
+                switch (optionToChange)
                 {
-                    PrefixCommand(input);
-                }
-                else if (optionToChange == "shouldlog" || optionToChange == "shouldtracktwich" ||
-                         optionToChange == "shouldannounceupdates" || optionToChange == "shouldannounceredditposts")
-                {
-                    await ReplyAsync(input + optionToChange);
+                    case "commandprefix":
+                    case "prefix":
+                    case "changeprefix":
+                        PrefixCommand(input);
+                        return;
+                    case "shouldlog":
+                    case "shouldtracktwich":
+                    case "shouldannounceupdates":
+                    case "shouldannounceredditposts":
+                        await ReplyAsync(input + optionToChange);
+                        return;
+
                 }
             }
 
@@ -190,6 +196,12 @@ namespace Crow.Commands
                     case "everyone":
                         return AnnouncementTypeEnum.Everyone;
                 }
+            }
+
+            //1 char, prefix
+            if (input.Length == 1)
+            {
+                return input;
             }
 
             //parsing failed - inform user
