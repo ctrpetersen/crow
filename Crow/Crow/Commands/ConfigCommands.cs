@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using Crow.Model;
@@ -36,39 +37,25 @@ namespace Crow.Commands
                 }
 
                 optionToChange = optionToChange.ToLower();
-                var input = TryParseInput(optionValue.ToLower());
-
-                if (input is string && input == "invalid")
-                {
-                    await ReplyAsync($"Error - unable to parse input {optionValue}");
-                    return;
-                }
 
                 switch (optionToChange)
                 {
                     case "commandprefix":
                     case "prefix":
                     case "changeprefix":
-                        Console.WriteLine(input.GetType());
-                        if (!input.GetType() == typeof(String))
+                        if (IsSingleChar(optionValue) != null)
                         {
-                            await ReplyAsync($"Error - unable to parse input {optionValue} for prefix setting.");
-                            //return;
+                            await PrefixCommand(optionValue);
+                            return;
                         }
-                        else if (input.ToString().Length != 1)
-                        {
-                            await ReplyAsync($"Error - unable to parse input {optionValue} for prefix setting.");
-                            //return;
-                        }
-                        PrefixCommand(input);
+                        await ReplyAsync($"Error - Incorrect parameter for setting prefix.");
                         return;
 
                     case "shouldlog":
-                    case "shouldtracktwich":
+                    case "shouldtracktwitch":
                     case "shouldannounceupdates":
                     case "shouldannounceredditposts":
-                        await ReplyAsync(input + optionToChange);
-                        return;
+                        break;
 
                 }
             }
@@ -136,7 +123,7 @@ namespace Crow.Commands
             await ReplyAsync($"Successfully changed prefix to `{prefix}`");
         }
 
-        //returns string "invalid" if no valid input was able to be parsed
+/*        //returns string "invalid" if no valid input was able to be parsed
         private dynamic TryParseInput(string input)
         {
             //bool
@@ -144,7 +131,7 @@ namespace Crow.Commands
                 return true;
             if (input == "no" || input == "false")
                 return false;
-            
+
             //is channel mention or ID - also check if client has permission to view
             if (Context.Message.MentionedChannels.Count == 1)
             {
@@ -156,6 +143,7 @@ namespace Crow.Commands
                     ReplyAsync($"Error - {channel.Name} is not a text channel.");
                     return "invalid";
                 }
+
                 ReplyAsync($"Error - Cannot send messages in channel {channel.Name}");
                 return "invalid";
             }
@@ -209,7 +197,85 @@ namespace Crow.Commands
 
             //parsing failed - inform user
             return "invalid";
+        }*/
+
+        public bool? IsBool(string input)
+        {
+            switch (input.ToLower())
+            {
+                case "yes":
+                case "true":
+                    return true;
+                case "no":
+                case "false":
+                    return false;
+            }
+            return null;
         }
+
+        public SocketGuildChannel IsChannel(string input)
+        {
+            if (Context.Message.MentionedChannels.Count == 1)
+            {
+                var channel = Context.Message.MentionedChannels.ToList()[0];
+                if (Crow.Instance.ClientCanSeeChannel(channel, Context.Guild))
+                {
+                    if (channel.GetType() == typeof(SocketTextChannel))
+                        return channel;
+                    ReplyAsync($"Error - {channel.Name} is not a text channel.");
+                    return null;
+                }
+                ReplyAsync($"Error - Cannot send messages in channel {channel.Name}");
+                return null;
+            }
+            if (input.Length == 18 && IsDigits(input))
+            {
+                var channel = Context.Guild.GetChannel(ulong.Parse(input));
+                if (channel != null)
+                {
+                    if (Crow.Instance.ClientCanSeeChannel(channel, Context.Guild))
+                        return channel;
+                    ReplyAsync($"Error - Cannot send messages in channel {channel.Name}");
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        public SocketRole IsRole(string input)
+        {
+            input = input.ToLower();
+
+            if (Context.Message.MentionedRoles.Count == 1)
+            {
+                return Context.Message.MentionedRoles.ToList()[0];
+            }
+
+            return Context.Guild.Roles.FirstOrDefault(socketRole => socketRole.Name.ToLower() == input);
+        }
+
+        public AnnouncementTypeEnum? IsAnnouncementTypeEnum(string input)
+        {
+            input = input.ToLower();
+            switch (input)
+            {
+                case "none":
+                    return AnnouncementTypeEnum.None;
+                case "here":
+                    return AnnouncementTypeEnum.Here;
+                case "everyone":
+                    return AnnouncementTypeEnum.Everyone;
+                default:
+                    return null;
+            }
+        }
+
+        public string IsSingleChar(string input)
+        {
+            return input.Length == 1 ? input : null;
+        }
+
+
 
         private static bool IsDigits(string input)
         {
