@@ -211,7 +211,7 @@ namespace Crow
             return null;
         }
 
-        public bool ClientCanSeeChannel(SocketGuildChannel channel, SocketGuild guild)
+        public static bool ClientCanSeeChannel(SocketGuildChannel channel, SocketGuild guild)
         {
             return guild.CurrentUser.GetPermissions(channel).SendMessages;
         }

@@ -14,10 +14,11 @@ namespace Crow.Commands
     public class ConfigCommands : ModuleBase<SocketCommandContext>
     {
         [Command("config")]
-        [Summary("`moderator only`\nViews all the config options for this guild and the current values, optionally allowing you to change them.\n" +
-                 "*Usage:* !config to view all the options, !config <setting name> <setting value> to change one, e.g. !config ShouldLog true or !config LiveRole @RoleMention" +
-                 "(alternatively just the name of it. Remember to wrap it in quotes if it contains a space!\n" +
-                 "The announcement ping type can be: None, Here or Everyone.")]
+        [Summary(
+            "`moderator only`\nViews all the config options for this guild and the current values, optionally allowing you to change them.\n" +
+            "*Usage:* !config to view all the options, !config <setting name> <setting value> to change one, e.g. !config ShouldLog true or !config LiveRole @RoleMention" +
+            "(alternatively just the name of it. Remember to wrap it in quotes if it contains a space!\n" +
+            "The announcement ping type can be: None, Here or Everyone.")]
         [Alias("settings", "configuration", "setting")]
         public async Task ConfigCommand(string optionToChange = null, string optionValue = null)
         {
@@ -54,29 +55,66 @@ namespace Crow.Commands
                         return;
 
                     case "shouldlog":
-                        bool? inputBool = IsBool(optionValue);
+                    case "log":
+                        bool? logBool = IsBool(optionValue);
 
-                        switch (inputBool)
+                        switch (logBool)
                         {
                             case null:
                                 await ReplyAsync($"Error - Incorrect parameter for setting shouldlog.");
                                 return;
                             case true:
                             case false:
-                                bool shouldLogBool = (bool) inputBool;
+                                bool shouldLogBool = (bool) logBool;
                                 var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
                                 guild.ShouldLog = shouldLogBool;
                                 Crow.Instance.CrowContext.Guilds.Update(guild);
                                 Crow.Instance.CrowContext.SaveChanges();
-                                await ReplyAsync($"Successfully changed shouldlog to `{inputBool.ToString()}`");
+                                await ReplyAsync($"Successfully changed shouldlog to `{logBool}`");
                                 return;
                             default:
                                 return;
                         }
 
+                    case "logchannel":
+                    case "logchannelid":
+                        var channel = IsChannel(optionValue);
+                        if (channel != null)
+                        {
+                            var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
+                            guild.LogChannelId = channel.Id.ToString();
+                            Crow.Instance.CrowContext.Guilds.Update(guild);
+                            Crow.Instance.CrowContext.SaveChanges();
+                            await ReplyAsync($"Successfully changed logchannel to `{channel.Name}`");
+                            return;
+                        }
+                        await ReplyAsync($"Error - Incorrect parameter for setting logchannel.");
+                        return;
+
+                    case "shouldtracktwitch":
+                    case "tracktwitch":
+                    case "liverole":
+                        bool? twitchBool = IsBool(optionValue);
+
+                        switch (twitchBool)
+                        {
+                            case null:
+                                await ReplyAsync($"Error - Incorrect parameter for setting shouldtracktwitch.");
+                                return;
+                            case true:
+                            case false:
+                                bool shouldLogBool = (bool) twitchBool;
+                                var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
+                                guild.ShouldLog = shouldLogBool;
+                                Crow.Instance.CrowContext.Guilds.Update(guild);
+                                Crow.Instance.CrowContext.SaveChanges();
+                                await ReplyAsync($"Successfully changed shouldtracktwitch to `{twitchBool}`");
+                                return;
+                            default:
+                                return;
+                        }
                 }
             }
-
 
             //no param
             else
@@ -135,7 +173,8 @@ namespace Crow.Commands
             guild.CommandPrefix = prefix;
             Crow.Instance.CrowContext.Guilds.Update(guild);
             Crow.Instance.CrowContext.SaveChanges();
-            await Crow.Log(new LogMessage(LogSeverity.Info, "Config", $"Changed prefix for {Context.Guild.Name} to {prefix}."));
+            await Crow.Log(new LogMessage(LogSeverity.Info, "Config",
+                $"Changed prefix for {Context.Guild.Name} to {prefix}."));
 
             await ReplyAsync($"Successfully changed prefix to `{prefix}`");
         }
@@ -235,7 +274,7 @@ namespace Crow.Commands
             if (Context.Message.MentionedChannels.Count == 1)
             {
                 var channel = Context.Message.MentionedChannels.ToList()[0];
-                if (Crow.Instance.ClientCanSeeChannel(channel, Context.Guild))
+                if (Crow.ClientCanSeeChannel(channel, Context.Guild))
                 {
                     if (channel.GetType() == typeof(SocketTextChannel))
                         return channel;
@@ -250,7 +289,7 @@ namespace Crow.Commands
                 var channel = Context.Guild.GetChannel(ulong.Parse(input));
                 if (channel != null)
                 {
-                    if (Crow.Instance.ClientCanSeeChannel(channel, Context.Guild))
+                    if (Crow.ClientCanSeeChannel(channel, Context.Guild))
                         return channel;
                     ReplyAsync($"Error - Cannot send messages in channel {channel.Name}");
                     return null;
@@ -291,7 +330,6 @@ namespace Crow.Commands
         {
             return input.Length == 1 ? input : null;
         }
-
 
 
         private static bool IsDigits(string input)
