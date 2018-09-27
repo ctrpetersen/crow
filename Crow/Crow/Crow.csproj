@@ -190,8 +190,8 @@
   <ItemGroup>
     <Compile Include="Commands\ConfigCommands.cs" />
     <Compile Include="Commands\CoreCommands.cs" />
+    <Compile Include="Commands\LinkMod.cs" />
     <Compile Include="Crow.cs" />
-    <Compile Include="IdHelper.cs" />
     <Compile Include="Model\AnnouncementTypeEnum.cs" />
     <Compile Include="Model\CrowContext.cs" />
     <Compile Include="Model\Faq.cs" />
