@@ -51,7 +51,8 @@ namespace Crow.Commands
                             await PrefixCommand(optionValue);
                             return;
                         }
-                        await ReplyAsync($"Error - Incorrect parameter for setting prefix.");
+
+                        await ReplyAsync($"Error - Incorrect parameter for setting `prefix`.");
                         return;
 
                     case "shouldlog":
@@ -61,7 +62,7 @@ namespace Crow.Commands
                         switch (logBool)
                         {
                             case null:
-                                await ReplyAsync($"Error - Incorrect parameter for setting shouldlog.");
+                                await ReplyAsync($"Error - Incorrect parameter for setting `shouldlog`.");
                                 return;
                             case true:
                             case false:
@@ -70,7 +71,7 @@ namespace Crow.Commands
                                 guild.ShouldLog = shouldLogBool;
                                 Crow.Instance.CrowContext.Guilds.Update(guild);
                                 Crow.Instance.CrowContext.SaveChanges();
-                                await ReplyAsync($"Successfully changed shouldlog to `{logBool}`");
+                                await ReplyAsync($"Successfully changed `shouldlog` to `{logBool}`");
                                 return;
                             default:
                                 return;
@@ -78,28 +79,28 @@ namespace Crow.Commands
 
                     case "logchannel":
                     case "logchannelid":
-                        var channel = IsChannel(optionValue);
-                        if (channel != null)
+                        var logChannel = IsChannel(optionValue);
+                        if (logChannel != null)
                         {
                             var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
-                            guild.LogChannelId = channel.Id.ToString();
+                            guild.LogChannelId = logChannel.Id.ToString();
                             Crow.Instance.CrowContext.Guilds.Update(guild);
                             Crow.Instance.CrowContext.SaveChanges();
-                            await ReplyAsync($"Successfully changed logchannel to `{channel.Name}`");
+                            await ReplyAsync($"Successfully changed `logchannel` to `{logChannel.Name}`");
                             return;
                         }
-                        await ReplyAsync($"Error - Incorrect parameter for setting logchannel.");
+
+                        await ReplyAsync($"Error - Incorrect parameter for setting `logchannel`.");
                         return;
 
                     case "shouldtracktwitch":
                     case "tracktwitch":
-                    case "liverole":
                         bool? twitchBool = IsBool(optionValue);
 
                         switch (twitchBool)
                         {
                             case null:
-                                await ReplyAsync($"Error - Incorrect parameter for setting shouldtracktwitch.");
+                                await ReplyAsync($"Error - Incorrect parameter for setting `shouldtracktwitch`.");
                                 return;
                             case true:
                             case false:
@@ -108,11 +109,126 @@ namespace Crow.Commands
                                 guild.ShouldLog = shouldLogBool;
                                 Crow.Instance.CrowContext.Guilds.Update(guild);
                                 Crow.Instance.CrowContext.SaveChanges();
-                                await ReplyAsync($"Successfully changed shouldtracktwitch to `{twitchBool}`");
+                                await ReplyAsync($"Successfully changed `shouldtracktwitch` to `{twitchBool}`");
                                 return;
                             default:
                                 return;
                         }
+
+                    case "liverole":
+                    case "liveroleid":
+                        var role = IsRole(optionValue);
+                        if (role != null)
+                        {
+                            var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
+                            guild.LiveRoleId = role.Id.ToString();
+                            Crow.Instance.CrowContext.Guilds.Update(guild);
+                            Crow.Instance.CrowContext.SaveChanges();
+                            await ReplyAsync($"Successfully changed `liverole` to `{role.Name}`");
+                            return;
+                        }
+
+                        await ReplyAsync($"Error - Incorrect parameter for setting `liverole`.");
+                        return;
+
+                    case "shouldannounceupdates":
+                    case "announceupdates":
+                        bool? announceUpdatesBool = IsBool(optionValue);
+
+                        switch (announceUpdatesBool)
+                        {
+                            case null:
+                                await ReplyAsync($"Error - Incorrect parameter for setting `shouldannounceupdates`.");
+                                return;
+                            case true:
+                            case false:
+                                bool shouldAnnounceUpdates = (bool) announceUpdatesBool;
+                                var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
+                                guild.ShouldAnnounceUpdates = shouldAnnounceUpdates;
+                                Crow.Instance.CrowContext.Guilds.Update(guild);
+                                Crow.Instance.CrowContext.SaveChanges();
+                                await ReplyAsync(
+                                    $"Successfully changed `shouldannounceupdates` to `{announceUpdatesBool}`");
+                                return;
+                            default:
+                                return;
+                        }
+
+                    case "announcetype":
+                    case "announcementtype":
+                        var announcementType = IsAnnouncementTypeEnum(optionValue);
+                        if (announcementType != null)
+                        {
+                            var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
+                            guild.AnnounceType = (int) announcementType;
+                            Crow.Instance.CrowContext.Guilds.Update(guild);
+                            Crow.Instance.CrowContext.SaveChanges();
+                            await ReplyAsync($"Successfully changed `announcetype` to `{announcementType}`");
+                            return;
+                        }
+                        await ReplyAsync($"Error - Incorrect parameter for setting `announcetype`.");
+                        return;
+
+                    case "updatechannel":
+                    case "announcementchannel":
+                    case "updatechannelid":
+                    case "announcementchannelid":
+                        var updateChannel = IsChannel(optionValue);
+                        if (updateChannel != null)
+                        {
+                            var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
+                            guild.UpdateChannelId = updateChannel.Id.ToString();
+                            Crow.Instance.CrowContext.Guilds.Update(guild);
+                            Crow.Instance.CrowContext.SaveChanges();
+                            await ReplyAsync($"Successfully changed `updatechannel` to `{updateChannel.Name}`");
+                            return;
+                        }
+
+                        await ReplyAsync($"Error - Incorrect parameter for setting `updatechannel`.");
+                        return;
+
+                    case "shouldannounceredditposts":
+                    case "announceredditposts":
+                    case "redditfeed":
+                        bool? redditBool = IsBool(optionValue);
+
+                        switch (redditBool)
+                        {
+                            case null:
+                                await ReplyAsync($"Error - Incorrect parameter for setting `shouldlog`.");
+                                return;
+                            case true:
+                            case false:
+                                bool shouldRedditBool = (bool)redditBool;
+                                var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
+                                guild.ShouldAnnounceRedditPosts = shouldRedditBool;
+                                Crow.Instance.CrowContext.Guilds.Update(guild);
+                                Crow.Instance.CrowContext.SaveChanges();
+                                await ReplyAsync($"Successfully changed `shouldannounceredditposts` to `{redditBool}`");
+                                return;
+                            default:
+                                return;
+                        }
+
+                    case "redditfeedchannel":
+                    case "redditfeedchannelid":
+                    case "redditchannel":
+                        var redditChannel = IsChannel(optionValue);
+                        if (redditChannel != null)
+                        {
+                            var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
+                            guild.RedditFeedChannelId = redditChannel.Id.ToString();
+                            Crow.Instance.CrowContext.Guilds.Update(guild);
+                            Crow.Instance.CrowContext.SaveChanges();
+                            await ReplyAsync($"Successfully changed `redditfeedchannel` to `{redditChannel.Name}`");
+                            return;
+                        }
+
+                        await ReplyAsync($"Error - Incorrect parameter for setting `redditfeedchannel`.");
+                        return;
+                    default:
+                        await ReplyAsync($"Error - No command named {optionToChange}");
+                        return;
                 }
             }
 
@@ -122,37 +238,37 @@ namespace Crow.Commands
                 var guild = Crow.Instance.CrowContext.Guilds.Find(Context.Guild.Id.ToString());
                 string reply = $"Configuration for {Context.Guild.Name}\n";
 
-                reply += $"\n`CommandPrefix`   {guild.CommandPrefix}";
-                reply += $"\n`ShouldLog`   {guild.ShouldLog}";
+                reply += $"\n`CommandPrefix`  {guild.CommandPrefix}";
+                reply += $"\n`ShouldLog`  {guild.ShouldLog}";
 
                 if (guild.LogChannelId != "")
-                    reply += $"\n`LogChannel`   {Context.Guild.GetChannel(Convert.ToUInt64(guild.LogChannelId)).Name}";
+                    reply += $"\n`LogChannel`  {Context.Guild.GetChannel(Convert.ToUInt64(guild.LogChannelId)).Name}";
                 else
-                    reply += $"\n`LogChannel`   None specified";
+                    reply += $"\n`LogChannel`  None specified";
 
-                reply += $"\n`ShouldTrackTwitch`   {guild.ShouldTrackTwitch}";
+                reply += $"\n`ShouldTrackTwitch`  {guild.ShouldTrackTwitch}";
 
                 if (guild.LiveRoleId != "")
-                    reply += $"\n`LiveRole`   {Context.Guild.GetRole(Convert.ToUInt64(guild.LiveRoleId)).Name}";
+                    reply += $"\n`LiveRole`  {Context.Guild.GetRole(Convert.ToUInt64(guild.LiveRoleId)).Name}";
                 else
-                    reply += $"\n`LiveRole`   None specified";
+                    reply += $"\n`LiveRole`  None specified";
 
-                reply += $"\n`ShouldAnnounceUpdates`   {guild.ShouldAnnounceUpdates}";
-                reply += $"\n`AnnounceType`   {(AnnouncementTypeEnum) guild.AnnounceType}";
+                reply += $"\n`ShouldAnnounceUpdates`  {guild.ShouldAnnounceUpdates}";
+                reply += $"\n`AnnounceType`  {(AnnouncementTypeEnum) guild.AnnounceType}";
 
                 if (guild.UpdateChannelId != "")
                     reply +=
-                        $"\n`UpdateChannel`   {Context.Guild.GetChannel(Convert.ToUInt64(guild.UpdateChannelId)).Name}";
+                        $"\n`UpdateChannel`  {Context.Guild.GetChannel(Convert.ToUInt64(guild.UpdateChannelId)).Name}";
                 else
-                    reply += $"\n`UpdateChannel`   None specified";
+                    reply += $"\n`UpdateChannel`  None specified";
 
-                reply += $"\n`ShouldAnnounceRedditPosts`   {guild.ShouldAnnounceRedditPosts}";
+                reply += $"\n`ShouldAnnounceRedditPosts`  {guild.ShouldAnnounceRedditPosts}";
 
                 if (guild.RedditFeedChannelId != "")
                     reply +=
-                        $"\n`RedditFeedChannel`   {Context.Guild.GetChannel(Convert.ToUInt64(guild.RedditFeedChannelId)).Name}";
+                        $"\n`RedditFeedChannel`  {Context.Guild.GetChannel(Convert.ToUInt64(guild.RedditFeedChannelId)).Name}";
                 else
-                    reply += $"\n`RedditFeedChannel`   None specified";
+                    reply += $"\n`RedditFeedChannel`  None specified";
 
                 await ReplyAsync(reply);
             }
@@ -266,6 +382,7 @@ namespace Crow.Commands
                 case "false":
                     return false;
             }
+
             return null;
         }
 
@@ -281,9 +398,11 @@ namespace Crow.Commands
                     ReplyAsync($"Error - {channel.Name} is not a text channel.");
                     return null;
                 }
+
                 ReplyAsync($"Error - Cannot send messages in channel {channel.Name}");
                 return null;
             }
+
             if (input.Length == 18 && IsDigits(input))
             {
                 var channel = Context.Guild.GetChannel(ulong.Parse(input));
@@ -295,6 +414,7 @@ namespace Crow.Commands
                     return null;
                 }
             }
+
             return null;
         }
 
@@ -316,10 +436,13 @@ namespace Crow.Commands
             switch (input)
             {
                 case "none":
+                case "0":
                     return AnnouncementTypeEnum.None;
                 case "here":
+                case "1":
                     return AnnouncementTypeEnum.Here;
                 case "everyone":
+                case "2":
                     return AnnouncementTypeEnum.Everyone;
                 default:
                     return null;
