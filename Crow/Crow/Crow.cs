@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Crow
         public dynamic Jsonvars = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(@".\private.json"));
         public CrowContext CrowContext;
         public SocketUser BotOwner;
-        public HttpClient httpClient;
+        public HttpClient HttpClient;
         
         private IServiceProvider _services;
 
@@ -35,7 +36,7 @@ namespace Crow
         public async Task StartAsync()
         {
             CrowContext = new CrowContext();
-            httpClient = new HttpClient();
+            HttpClient = new HttpClient();
 
             Client = new DiscordSocketClient(new DiscordSocketConfig()
             {

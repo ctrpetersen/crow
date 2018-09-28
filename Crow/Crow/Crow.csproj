@@ -196,17 +196,17 @@
     <Compile Include="Model\CrowContext.cs" />
     <Compile Include="Model\Faq.cs" />
     <Compile Include="Model\Guild.cs" />
-    <Compile Include="Model\Mod.cs" />
     <Compile Include="Model\Reminder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tasks\UpdateModCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="efpt.config.json" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Tasks\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
